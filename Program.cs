@@ -1,6 +1,8 @@
 using TestCase_RIT_CrudAPI.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using TestCase_RIT_CrudAPI.Data.Seeds;
+using TestCase_RIT_CrudAPI.Data.Interfaces;
+using TestCase_RIT_CrudAPI.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddTransient<StandartSeed>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<IDrillBlockRepository, DrillBlockRepository>();
+builder.Services.AddScoped<IDrillBlockPointRepository, DrillBlockPointRepository>();
+builder.Services.AddScoped<IHoleRepository, HoleRepository>();
+builder.Services.AddScoped<IHolePointRepository, HolePointRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
