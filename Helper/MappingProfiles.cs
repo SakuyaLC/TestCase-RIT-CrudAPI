@@ -6,6 +6,7 @@ namespace TestCase_RIT_CrudAPI.Helper
 {
     public class MappingProfiles : Profile
     {
+        //Маппинг модели в DTO и обратно
         public MappingProfiles()
         {
             CreateMap<DrillBlock, DrillBlockDTO>();
