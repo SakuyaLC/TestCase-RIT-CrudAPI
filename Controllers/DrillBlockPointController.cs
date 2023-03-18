@@ -24,6 +24,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             _mapper = mapper;
         }
 
+        //Получить все точки блока
         [HttpGet("/get-drillBlockPoints")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<DrillBlockPoint>))]
         async public Task<IActionResult> GetDrillBlockPoints()
@@ -33,6 +34,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             return Ok(drillBlockPoints);
         }
 
+        //Получить определенную точку блока по id
         [HttpGet("/get-drillBlockPoint")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(IEnumerable<DrillBlockPoint>))]
@@ -47,6 +49,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             return Ok(drillBlockPoint);
         }
 
+        //Создать точку блока
         [HttpPost("/create-drillBlockPoint")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -69,6 +72,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
                 return Ok("Drill block point successfully created");
         }
 
+        //Обновить информацию в точке блока по id
         [HttpPut("/update-drillBlockPoint")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
@@ -101,6 +105,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
                 return Ok("Drill block point has been successfully updated");
         }
 
+        //Удалить точку блока по id
         [HttpDelete("/remove-drillBlockPoint")]
         [ProducesResponseType(404)]
         [ProducesResponseType(204)]

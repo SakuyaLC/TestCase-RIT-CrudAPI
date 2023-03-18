@@ -24,6 +24,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             _mapper = mapper;
         }
 
+        //Получить все точки скважин
         [HttpGet("/get-holePoints")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<HolePoint>))]
         async public Task<IActionResult> GetHolePoints()
@@ -33,6 +34,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             return Ok(holePoints);
         }
 
+        //Получить определенную точку скважины по id
         [HttpGet("/get-holePoint")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(IEnumerable<HolePoint>))]
@@ -47,6 +49,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             return Ok(holePoint);
         }
 
+        //Создать точку скважины
         [HttpPost("/create-holePoint")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -69,6 +72,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
                 return Ok("Hole point successfully created");
         }
 
+        //Обновить информацию в точке скважины по id
         [HttpPut("/update-holePoint")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
@@ -100,6 +104,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
                 return Ok("Hole point has been successfully updated");
         }
 
+        //Удалить точку скважины по id
         [HttpDelete("/remove-holePoint")]
         [ProducesResponseType(404)]
         [ProducesResponseType(204)]

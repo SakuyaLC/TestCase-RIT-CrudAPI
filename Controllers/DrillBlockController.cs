@@ -20,6 +20,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             _mapper = mapper;
         }
 
+        //Получить все блоки
         [HttpGet("/get-drillBlocks")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<DrillBlock>))]
         async public Task<IActionResult> GetDrillBlocks()
@@ -29,6 +30,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             return Ok(drillBlocks);
         }
 
+        //Получить определенный блок по id
         [HttpGet("/get-drillBlock")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(IEnumerable<DrillBlock>))]
@@ -43,6 +45,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             return Ok(drillBlock);
         }
 
+        //Создать блок
         [HttpPost("/create-drillBlock")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -63,6 +66,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
                 return Ok("Drillblock successfully created");
         }
 
+        //Обновить информацию в блоке по id (Дата обновления обновляется автоматически)
         [HttpPut("/update-drillBlock")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
@@ -89,6 +93,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
                 return Ok("Drill block has been successfully updated");
         }
 
+        //Удалить блок по id
         [HttpDelete("/remove-drillBlock")]
         [ProducesResponseType(404)]
         [ProducesResponseType(204)]

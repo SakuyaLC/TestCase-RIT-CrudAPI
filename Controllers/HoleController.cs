@@ -24,6 +24,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             _mapper = mapper;
         }
 
+        //Получить все скважины
         [HttpGet("/get-holes")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Hole>))]
         async public Task<IActionResult> GetHoles()
@@ -33,6 +34,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             return Ok(holes);
         }
 
+        //Получить определенную скважину по id
         [HttpGet("/get-hole")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Hole>))]
@@ -47,6 +49,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             return Ok(hole);
         }
 
+        //Создать скважину
         [HttpPost("/create-hole")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -68,6 +71,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
                 return Ok("Hole successfully created");
         }
 
+        //Обновить скважину по id
         [HttpPut("/update-hole")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
@@ -97,6 +101,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
                 return Ok("Hole has been successfully updated");
         }
 
+        //Удалить скважину по id
         [HttpDelete("/remove-hole")]
         [ProducesResponseType(404)]
         [ProducesResponseType(204)]
