@@ -22,18 +22,18 @@ namespace TestCase_RIT_CrudAPI.Controllers
 
         [HttpGet("/get-drillBlocks")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<DrillBlock>))]
-        public IActionResult GetDrillBlocks()
+        async public Task<IActionResult> GetDrillBlocks()
         {
-            var drillBlocks = _mapper.Map<List<DrillBlockDTO>>(_drillBlockRepository.GetDrillBlocks().Result);
+            var drillBlocks = _mapper.Map<List<DrillBlockDTO>>(await _drillBlockRepository.GetDrillBlocks());
 
             return Ok(drillBlocks);
         }
 
         [HttpGet("/get-drillBlock/{Id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<DrillBlock>))]
-        public IActionResult GetSpecifiedDrillBlock(int Id)
+        async public Task<IActionResult> GetSpecifiedDrillBlock(int Id)
         {
-            var drillBlock = _mapper.Map<DrillBlockDTO>(_drillBlockRepository.GetSpecificDrillBlock(Id).Result);
+            var drillBlock = _mapper.Map<DrillBlockDTO>(await _drillBlockRepository.GetSpecificDrillBlock(Id));
 
             return Ok(drillBlock);
         }
@@ -41,7 +41,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpPost("/create-drillBlock")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public IActionResult CreateDrillBlock([FromQuery] DrillBlockDTO drillBlock)
+        async public Task<IActionResult> CreateDrillBlock([FromQuery] DrillBlockDTO drillBlock)
         {
             if (drillBlock == null) return BadRequest(ModelState);
 
@@ -50,7 +50,9 @@ namespace TestCase_RIT_CrudAPI.Controllers
 
             drillBlockMap.UpdateDate = DateTime.Now;
 
-            if (!_drillBlockRepository.CreateDrillBlock(drillBlockMap).Result)
+            bool result = await _drillBlockRepository.CreateDrillBlock(drillBlockMap);
+
+            if (!result)
                 return BadRequest(ModelState);
             else
                 return Ok("Drillblock successfully created");
@@ -59,18 +61,21 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpPut("/update-drillBlock/{Id}")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        public IActionResult UpdateDrillBlock([Required] int Id, [FromQuery] DrillBlockDTO drillBlock)
+        async public Task<IActionResult> UpdateDrillBlock([Required] int Id, [FromQuery] DrillBlockDTO drillBlock)
         {
-            if (!_drillBlockRepository.DrillBlockExists(Id).Result)
+            bool exists = await _drillBlockRepository.DrillBlockExists(Id);
+            if (!exists)
                 return NotFound();
 
-            var drillBlockForUpdate = _drillBlockRepository.GetSpecificDrillBlock(Id).Result;
+            var drillBlockForUpdate = await _drillBlockRepository.GetSpecificDrillBlock(Id);
 
             drillBlockForUpdate.Name = drillBlock.Name;
 
             drillBlockForUpdate.UpdateDate = drillBlock.UpdateDate;
 
-            if (!_drillBlockRepository.UpdateDrillBlock(drillBlockForUpdate).Result)
+            bool result = await _drillBlockRepository.UpdateDrillBlock(drillBlockForUpdate);
+
+            if (!result)
             {
                 ModelState.AddModelError("", "Something went wrong when updating drill block");
                 return StatusCode(500, ModelState);
@@ -82,14 +87,17 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpDelete("/remove-drillBlock")]
         [ProducesResponseType(404)]
         [ProducesResponseType(204)]
-        public IActionResult DeleteDrillBlock(int Id)
+        async public Task<IActionResult> DeleteDrillBlock(int Id)
         {
-            if (!_drillBlockRepository.DrillBlockExists(Id).Result)
+            bool exists = await _drillBlockRepository.DrillBlockExists(Id);
+            if (!exists)
                 return NotFound();
 
-            var drillBlockToDelete = _drillBlockRepository.GetSpecificDrillBlock(Id).Result;
+            var drillBlockToDelete = await _drillBlockRepository.GetSpecificDrillBlock(Id);
 
-            if (!_drillBlockRepository.DeleteDrillBlock(drillBlockToDelete).Result)
+            bool result = await _drillBlockRepository.DeleteDrillBlock(drillBlockToDelete);
+
+            if (!result)
             {
                 ModelState.AddModelError("", "Something went wrong when updating drill block");
                 return StatusCode(500, ModelState);

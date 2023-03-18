@@ -23,18 +23,18 @@ namespace TestCase_RIT_CrudAPI.Controllers
 
         [HttpGet("/get-holes")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Hole>))]
-        public IActionResult GetHoles()
+        async public Task<IActionResult> GetHoles()
         {
-            var holes = _mapper.Map<List<HoleDTO>>(_holeRepository.GetHoles().Result);
+            var holes = _mapper.Map<List<HoleDTO>>(await _holeRepository.GetHoles());
 
             return Ok(holes);
         }
 
         [HttpGet("/get-hole/{Id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Hole>))]
-        public IActionResult GetSpecifiedHole(int Id)
+        async public Task<IActionResult> GetSpecifiedHole(int Id)
         {
-            var hole = _mapper.Map<Hole>(_holeRepository.GetSpecificHole(Id).Result);
+            var hole = _mapper.Map<Hole>(await _holeRepository.GetSpecificHole(Id));
 
             return Ok(hole);
         }
@@ -42,14 +42,15 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpPost("/create-hole")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public IActionResult CreateHole([FromQuery] HoleDTO hole)
+        async public Task<IActionResult> CreateHole([FromQuery] HoleDTO hole)
         {
             if (hole == null) return BadRequest(ModelState);
 
             var holeMap = _mapper.Map<Hole>(hole);
             if (holeMap == null) return BadRequest(ModelState);
 
-            if (!_holeRepository.CreateHole(holeMap).Result)
+            bool result = await _holeRepository.CreateHole(holeMap);
+            if (!result)
                 return BadRequest(ModelState);
             else
                 return Ok("Hole successfully created");
@@ -58,18 +59,20 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpPut("/update-hole")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        public IActionResult UpdateHole([Required] int Id, [FromQuery] HoleDTO hole)
+        async public Task<IActionResult> UpdateHole([Required] int Id, [FromQuery] HoleDTO hole)
         {
-            if (!_holeRepository.HoleExists(Id).Result)
+            bool exists = await _holeRepository.HoleExists(Id);
+            if (!exists)
                 return NotFound();
 
-            var holeForUpdate = _holeRepository.GetSpecificHole(Id).Result;
+            var holeForUpdate = await _holeRepository.GetSpecificHole(Id);
 
             holeForUpdate.Name = hole.Name;
             holeForUpdate.DrillBlockId = hole.DrillBlockId;
             holeForUpdate.Depth = hole.Depth;
 
-            if (!_holeRepository.UpdateHole(holeForUpdate).Result)
+            bool result = await _holeRepository.UpdateHole(holeForUpdate);
+            if (!result)
             {
                 ModelState.AddModelError("", "Something went wrong when updating hole");
                 return StatusCode(500, ModelState);
@@ -81,14 +84,16 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpDelete("/remove-hole")]
         [ProducesResponseType(404)]
         [ProducesResponseType(204)]
-        public IActionResult DeleteHole(int Id)
+        async public Task<IActionResult> DeleteHole(int Id)
         {
-            if (!_holeRepository.HoleExists(Id).Result)
+            bool exists = await _holeRepository.HoleExists(Id);
+            if (!exists)
                 return NotFound();
 
-            var holeToDelete = _holeRepository.GetSpecificHole(Id).Result;
+            var holeToDelete = await _holeRepository.GetSpecificHole(Id);
 
-            if (!_holeRepository.DeleteHole(holeToDelete).Result)
+            bool result = await _holeRepository.DeleteHole(holeToDelete);
+            if (!result)
             {
                 ModelState.AddModelError("", "Something went wrong when updating hole");
                 return StatusCode(500, ModelState);

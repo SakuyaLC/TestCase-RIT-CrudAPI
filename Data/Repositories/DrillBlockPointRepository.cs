@@ -1,4 +1,5 @@
-﻿using TestCase_RIT_CrudAPI.Data.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using TestCase_RIT_CrudAPI.Data.Context;
 using TestCase_RIT_CrudAPI.Data.Interfaces;
 using TestCase_RIT_CrudAPI.Model;
 
@@ -15,83 +16,38 @@ namespace TestCase_RIT_CrudAPI.Data.Repositories
 
         async public Task<bool> DrillBlockPointExists(int Id)
         {
-            bool result = false;
-
-            await Task.Run(
-            () =>
-            {
-                result = _context.DrillBlockPoints.Any(dbp => dbp.Id == Id);
-            });
-
-            return result;
+            return await _context.DrillBlockPoints.AnyAsync(dbp => dbp.Id == Id);
         }
 
         async public Task<ICollection<DrillBlockPoint>> GetDrillBlockPoints()
         {
-            ICollection<DrillBlockPoint> result = null;
-
-            await Task.Run(
-            () =>
-            {
-                result = _context.DrillBlockPoints.OrderBy(dbp => dbp.Id).ToList();
-            });
-
-            return result;
+            return await _context.DrillBlockPoints.OrderBy(dbp => dbp.Id).ToListAsync();
         }
 
         async public Task<DrillBlockPoint> GetSpecificDrillBlockPoint(int Id)
         {
-            DrillBlockPoint result = null;
-
-            await Task.Run(
-            () =>
-            {
-                result = _context.DrillBlockPoints.Where(dbp => dbp.Id == Id).SingleOrDefault();
-            });
-
-            return result;
+            return await _context.DrillBlockPoints.Where(dbp => dbp.Id == Id).SingleOrDefaultAsync();
         }
 
         async public Task<bool> CreateDrillBlockPoint(DrillBlockPoint drillBlockPoint)
         {
-            bool result = false;
+            _context.Add(drillBlockPoint);
 
-            await Task.Run(
-            async () =>
-            {
-                _context.Add(drillBlockPoint);
-                result = await Save();
-            });
-
-            return result;
+            return await Save();
         }
 
         async public Task<bool> DeleteDrillBlockPoint(DrillBlockPoint drillBlockPoint)
         {
-            bool result = false;
+            _context.Remove(drillBlockPoint);
 
-            await Task.Run(
-            async () =>
-            {
-                _context.Remove(drillBlockPoint);
-                result = await Save();
-            });
-
-            return result;
+            return await Save();
         }
 
         async public Task<bool> UpdateDrillBlockPoint(DrillBlockPoint drillBlockPoint)
         {
-            bool result = false;
+            _context.Update(drillBlockPoint);
 
-            await Task.Run(
-            async () =>
-            {
-                _context.Update(drillBlockPoint);
-                result = await Save();
-            });
-
-            return result;
+            return await Save();
         }
 
         async public Task<bool> Save()

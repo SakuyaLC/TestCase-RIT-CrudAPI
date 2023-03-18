@@ -1,4 +1,5 @@
-﻿using TestCase_RIT_CrudAPI.Data.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using TestCase_RIT_CrudAPI.Data.Context;
 using TestCase_RIT_CrudAPI.Data.Interfaces;
 using TestCase_RIT_CrudAPI.Model;
 
@@ -15,83 +16,38 @@ namespace TestCase_RIT_CrudAPI.Data.Repositories
 
         async public Task<bool> HoleExists(int Id)
         {
-            bool result = false;
-
-            await Task.Run(
-            () =>
-            {
-                result = _context.Holes.Any(h => h.Id == Id);
-            });
-
-            return result;
+            return await _context.Holes.AnyAsync(h => h.Id == Id);
         }
 
         async public Task<ICollection<Hole>> GetHoles()
         {
-            ICollection<Hole> result = null;
-
-            await Task.Run(
-            () =>
-            {
-                result = _context.Holes.OrderBy(h => h.Id).ToList();
-            });
-
-            return result;
+            return await _context.Holes.OrderBy(h => h.Id).ToListAsync();
         }
 
         async public Task<Hole> GetSpecificHole(int Id)
         {
-            Hole result = null;
-
-            await Task.Run(
-            () =>
-            {
-                result = _context.Holes.Where(h => h.Id == Id).SingleOrDefault();
-            });
-
-            return result;
+            return await _context.Holes.Where(h => h.Id == Id).SingleOrDefaultAsync();
         }
 
         async public Task<bool> CreateHole(Hole hole)
         {
-            bool result = false;
+            _context.Add(hole);
 
-            await Task.Run(
-            async () =>
-            {
-                _context.Add(hole);
-                result = await Save();
-            });
-
-            return result;
+            return await Save();
         }
 
         async public Task<bool> DeleteHole(Hole hole)
         {
-            bool result = false;
+            _context.Remove(hole);
 
-            await Task.Run(
-            async () =>
-            {
-                _context.Remove(hole);
-                result = await Save();
-            });
-
-            return result;
+            return await Save();
         }
 
         async public Task<bool> UpdateHole(Hole hole)
         {
-            bool result = false;
+            _context.Update(hole);
 
-            await Task.Run(
-            async () =>
-            {
-                _context.Update(hole);
-                result = await Save();
-            });
-
-            return result;
+            return await Save();
         }
 
         async public Task<bool> Save()

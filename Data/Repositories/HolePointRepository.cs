@@ -1,4 +1,5 @@
-﻿using TestCase_RIT_CrudAPI.Data.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using TestCase_RIT_CrudAPI.Data.Context;
 using TestCase_RIT_CrudAPI.Data.Interfaces;
 using TestCase_RIT_CrudAPI.Model;
 
@@ -15,83 +16,38 @@ namespace TestCase_RIT_CrudAPI.Data.Repositories
 
         async public Task<bool> HolePointExists(int Id)
         {
-            bool result = false;
-
-            await Task.Run(
-            () =>
-            {
-                result = _context.HolePoints.Any(hp => hp.Id == Id);
-            });
-
-            return result;
+            return await _context.HolePoints.AnyAsync(hp => hp.Id == Id);
         }
 
         async public Task<ICollection<HolePoint>> GetHolePoints()
         {
-            ICollection<HolePoint> result = null;
-
-            await Task.Run(
-            () =>
-            {
-                result = _context.HolePoints.OrderBy(hp => hp.Id).ToList();
-            });
-
-            return result;
+            return await _context.HolePoints.OrderBy(hp => hp.Id).ToListAsync();
         }
 
         async public Task<HolePoint> GetSpecificHolePoint(int Id)
         {
-            HolePoint result = null;
-
-            await Task.Run(
-            () =>
-            {
-                result = _context.HolePoints.Where(hp => hp.Id == Id).SingleOrDefault();
-            });
-
-            return result;
+            return await _context.HolePoints.Where(hp => hp.Id == Id).SingleOrDefaultAsync();
         }
 
         async public Task<bool> CreateHolePoint(HolePoint holePoint)
         {
-            bool result = false;
+            _context.Add(holePoint);
 
-            await Task.Run(
-            async () =>
-            {
-                _context.Add(holePoint);
-                result = await Save();
-            });
-
-            return result;
+            return await Save();
         }
 
         async public Task<bool> DeleteHolePoint(HolePoint holePoint)
         {
-            bool result = false;
+            _context.Remove(holePoint);
 
-            await Task.Run(
-            async () =>
-            {
-                _context.Remove(holePoint);
-                result = await Save();
-            });
-
-            return result;
+            return await Save();
         }
 
         async public Task<bool> UpdateHolePoint(HolePoint holePoint)
         {
-            bool result = false;
+            _context.Update(holePoint);
 
-            await Task.Run(
-            async () =>
-            {
-                _context.Update(holePoint);
-                result = await Save();
-            });
-
-            return result;
+            return await Save();
         }
 
         async public Task<bool> Save()

@@ -23,18 +23,18 @@ namespace TestCase_RIT_CrudAPI.Controllers
 
         [HttpGet("/get-holePoints")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<HolePoint>))]
-        public IActionResult GetDrillBlocks()
+        async public Task<IActionResult> GetDrillBlocks()
         {
-            var holePoints = _mapper.Map<List<HolePointDTO>>(_holePointRepository.GetHolePoints().Result);
+            var holePoints = _mapper.Map<List<HolePointDTO>>(await _holePointRepository.GetHolePoints());
 
             return Ok(holePoints);
         }
 
         [HttpGet("/get-holePoint/{Id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<HolePoint>))]
-        public IActionResult GetSpecifiedHolePoint(int Id)
+        async public Task<IActionResult> GetSpecifiedHolePoint(int Id)
         {
-            var holePoint = _mapper.Map<HolePoint>(_holePointRepository.GetSpecificHolePoint(Id).Result);
+            var holePoint = _mapper.Map<HolePoint>(await _holePointRepository.GetSpecificHolePoint(Id));
 
             return Ok(holePoint);
         }
@@ -42,14 +42,16 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpPost("/create-holePoint")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public IActionResult CreateHole([FromQuery] HolePointDTO holePoint)
+        async public Task<IActionResult> CreateHole([FromQuery] HolePointDTO holePoint)
         {
             if (holePoint == null) return BadRequest(ModelState);
 
             var holePointMap = _mapper.Map<HolePoint>(holePoint);
             if (holePointMap == null) return BadRequest(ModelState);
 
-            if (!_holePointRepository.CreateHolePoint(holePointMap).Result)
+            bool result = await _holePointRepository.CreateHolePoint(holePointMap);
+
+            if (!result)
                 return BadRequest(ModelState);
             else
                 return Ok("Hole point successfully created");
@@ -58,19 +60,22 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpPut("/update-holePoint")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        public IActionResult UpdateHolePoint([Required] int Id, [FromQuery] HolePointDTO holePoint)
+        async public Task<IActionResult> UpdateHolePoint([Required] int Id, [FromQuery] HolePointDTO holePoint)
         {
-            if (!_holePointRepository.HolePointExists(Id).Result)
+            bool exists = await _holePointRepository.HolePointExists(Id);
+            if (!exists)
                 return NotFound();
 
-            var holePointForUpdate = _holePointRepository.GetSpecificHolePoint(Id).Result;
+            var holePointForUpdate = await _holePointRepository.GetSpecificHolePoint(Id);
 
             holePointForUpdate.HoleId = holePoint.HoleId;
             holePointForUpdate.X = holePoint.X;
             holePointForUpdate.Y = holePoint.Y;
             holePointForUpdate.Z = holePoint.Z;
 
-            if (!_holePointRepository.UpdateHolePoint(holePointForUpdate).Result)
+            bool result = await _holePointRepository.UpdateHolePoint(holePointForUpdate);
+
+            if (!result)
             {
                 ModelState.AddModelError("", "Something went wrong when updating hole");
                 return StatusCode(500, ModelState);
@@ -82,14 +87,17 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpDelete("/remove-holePoint")]
         [ProducesResponseType(404)]
         [ProducesResponseType(204)]
-        public IActionResult DeleteHolePoint(int Id)
+        async public Task<IActionResult> DeleteHolePoint(int Id)
         {
-            if (!_holePointRepository.HolePointExists(Id).Result)
+            bool exists = await _holePointRepository.HolePointExists(Id);
+            if (!exists)
                 return NotFound();
 
-            var holeToDelete = _holePointRepository.GetSpecificHolePoint(Id).Result;
+            var holeToDelete = await _holePointRepository.GetSpecificHolePoint(Id);
 
-            if (!_holePointRepository.DeleteHolePoint(holeToDelete).Result)
+            bool result = await _holePointRepository.DeleteHolePoint(holeToDelete);
+
+            if (!result)
             {
                 ModelState.AddModelError("", "Something went wrong when updating hole point");
                 return StatusCode(500, ModelState);

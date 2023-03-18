@@ -23,18 +23,18 @@ namespace TestCase_RIT_CrudAPI.Controllers
 
         [HttpGet("/get-drillBlockPoints")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<DrillBlockPoint>))]
-        public IActionResult GetDrillBlockPoints()
+        async public Task<IActionResult> GetDrillBlockPoints()
         {
-            var drillBlockPoints = _mapper.Map<List<DrillBlockPointDTO>>(_drillBlockPointRepository.GetDrillBlockPoints().Result);
+            var drillBlockPoints = _mapper.Map<List<DrillBlockPointDTO>>(await _drillBlockPointRepository.GetDrillBlockPoints());
 
             return Ok(drillBlockPoints);
         }
 
         [HttpGet("/get-drillBlockPoint/{Id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<DrillBlockPoint>))]
-        public IActionResult GetSpecifiedDrillBlockPoint(int Id)
+        async public Task<IActionResult> GetSpecifiedDrillBlockPoint(int Id)
         {
-            var drillBlockPoint = _mapper.Map<DrillBlockPointDTO>(_drillBlockPointRepository.GetSpecificDrillBlockPoint(Id).Result);
+            var drillBlockPoint = _mapper.Map<DrillBlockPointDTO>(await _drillBlockPointRepository.GetSpecificDrillBlockPoint(Id));
 
             return Ok(drillBlockPoint);
         }
@@ -42,14 +42,16 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpPost("/create-drillBlockPoint")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public IActionResult CreateDrillBlockPoint([FromQuery] DrillBlockPointDTO drillBlockPoint)
+        async public Task<IActionResult> CreateDrillBlockPoint([FromQuery] DrillBlockPointDTO drillBlockPoint)
         {
             if (drillBlockPoint == null) return BadRequest(ModelState);
 
             var drillBlockPointMap = _mapper.Map<DrillBlockPoint>(drillBlockPoint);
             if (drillBlockPointMap == null) return BadRequest(ModelState);
 
-            if (!_drillBlockPointRepository.CreateDrillBlockPoint(drillBlockPointMap).Result)
+            bool result = await _drillBlockPointRepository.CreateDrillBlockPoint(drillBlockPointMap);
+
+            if (!result)
                 return BadRequest(ModelState);
             else
                 return Ok("Drill block point successfully created");
@@ -58,12 +60,13 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpPut("/update-drillBlockPoint/{Id}")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        public IActionResult UpdateDrillBlockPoint([Required] int Id, [FromQuery] DrillBlockPointDTO drillBlockPoint)
+        async public Task<IActionResult> UpdateDrillBlockPoint([Required] int Id, [FromQuery] DrillBlockPointDTO drillBlockPoint)
         {
-            if (!_drillBlockPointRepository.DrillBlockPointExists(Id).Result)
+            bool exists = await _drillBlockPointRepository.DrillBlockPointExists(Id);
+            if (!exists)
                 return NotFound();
 
-            var drillBlockPointForUpdate = _drillBlockPointRepository.GetSpecificDrillBlockPoint(Id).Result;
+            var drillBlockPointForUpdate = await _drillBlockPointRepository.GetSpecificDrillBlockPoint(Id);
 
             drillBlockPointForUpdate.DrillBlockId = drillBlockPoint.DrillBlockId;
             drillBlockPointForUpdate.Sequence = drillBlockPoint.Sequence;
@@ -71,7 +74,9 @@ namespace TestCase_RIT_CrudAPI.Controllers
             drillBlockPointForUpdate.Y = drillBlockPoint.Y;
             drillBlockPointForUpdate.Z = drillBlockPoint.Z;
 
-            if (!_drillBlockPointRepository.UpdateDrillBlockPoint(drillBlockPointForUpdate).Result)
+            bool result = await _drillBlockPointRepository.UpdateDrillBlockPoint(drillBlockPointForUpdate);
+
+            if (!result)
             {
                 ModelState.AddModelError("", "Something went wrong when updating drill block");
                 return StatusCode(500, ModelState);
@@ -83,14 +88,17 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpDelete("/remove-drillBlockPoint")]
         [ProducesResponseType(404)]
         [ProducesResponseType(204)]
-        public IActionResult DeleteDrillBlockPoint(int Id)
+        async public Task<IActionResult> DeleteDrillBlockPoint(int Id)
         {
-            if (!_drillBlockPointRepository.DrillBlockPointExists(Id).Result)
+            bool exists = await _drillBlockPointRepository.DrillBlockPointExists(Id);
+            if (!exists)
                 return NotFound();
 
-            var drillBlockPointToDelete = _drillBlockPointRepository.GetSpecificDrillBlockPoint(Id).Result;
+            var drillBlockPointToDelete = await _drillBlockPointRepository.GetSpecificDrillBlockPoint(Id);
 
-            if (!_drillBlockPointRepository.DeleteDrillBlockPoint(drillBlockPointToDelete).Result)
+            bool result = await _drillBlockPointRepository.DeleteDrillBlockPoint(drillBlockPointToDelete);
+
+            if (!result)
             {
                 ModelState.AddModelError("", "Something went wrong when updating drill block");
                 return StatusCode(500, ModelState);

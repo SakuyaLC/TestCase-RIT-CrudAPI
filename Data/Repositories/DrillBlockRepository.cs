@@ -1,4 +1,5 @@
-﻿using TestCase_RIT_CrudAPI.Data.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using TestCase_RIT_CrudAPI.Data.Context;
 using TestCase_RIT_CrudAPI.Data.Interfaces;
 using TestCase_RIT_CrudAPI.Model;
 
@@ -15,88 +16,38 @@ namespace TestCase_RIT_CrudAPI.Data.Repositories
 
         async public Task<bool> DrillBlockExists(int Id)
         {
-            bool result = false;
-
-            await Task.Run(
-            () =>
-            {
-                result = _context.DrillBlocks.Any(db => db.Id == Id);
-            });
-
-            return result;
+            return await _context.DrillBlocks.AnyAsync(db => db.Id == Id);
         }
 
         async public Task<ICollection<DrillBlock>> GetDrillBlocks()
         {
-            ICollection<DrillBlock> result = null;
-
-            await Task.Run(
-            () =>
-            {
-                result = _context.DrillBlocks.OrderBy(db => db.Id).ToList();
-            });
-
-            return result;
-
+            return await _context.DrillBlocks.OrderBy(db => db.Id).ToListAsync();
         }
 
         async public Task<DrillBlock> GetSpecificDrillBlock(int Id)
         {
-            DrillBlock result = null;
-
-            await Task.Run(
-            () =>
-            {
-                result = _context.DrillBlocks.Where(db => db.Id == Id).SingleOrDefault();
-            });
-
-            return result;
+            return await _context.DrillBlocks.Where(db => db.Id == Id).SingleOrDefaultAsync();
         }
 
         async public Task<bool> CreateDrillBlock(DrillBlock drillBlock)
         {
+            _context.Add(drillBlock);
 
-            bool result = false;
-
-            await Task.Run(
-            async () =>
-            {
-                _context.Add(drillBlock);
-
-                result = await Save();
-            });
-
-            return result;
+            return await Save();
         }
 
         async public Task<bool> DeleteDrillBlock(DrillBlock drillBlock)
         {
-            bool result = false;
+            _context.Remove(drillBlock);
 
-            await Task.Run(
-            async () =>
-            {
-                _context.Remove(drillBlock);
-
-                result = await Save();
-            });
-
-            return result;
+            return await Save();
         }
 
         async public Task<bool> UpdateDrillBlock(DrillBlock drillblock)
         {
-            bool result = false;
+            _context.Update(drillblock);
 
-            await Task.Run(
-            async () =>
-            {
-                _context.Update(drillblock);
-
-                result = await Save();
-            });
-
-            return result;
+            return await Save();
         }
 
         async public Task<bool> Save()
