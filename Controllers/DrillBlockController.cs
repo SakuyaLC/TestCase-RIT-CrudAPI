@@ -29,7 +29,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             return Ok(drillBlocks);
         }
 
-        [HttpGet("/get-drillBlock/{Id}")]
+        [HttpGet("/get-drillBlock")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<DrillBlock>))]
         async public Task<IActionResult> GetSpecificDrillBlock(int Id)
         {
@@ -58,20 +58,20 @@ namespace TestCase_RIT_CrudAPI.Controllers
                 return Ok("Drillblock successfully created");
         }
 
-        [HttpPut("/update-drillBlock/{Id}")]
+        [HttpPut("/update-drillBlock")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        async public Task<IActionResult> UpdateDrillBlock([Required] int Id, [FromQuery] DrillBlockDTO drillBlock)
+        async public Task<IActionResult> UpdateDrillBlock([FromQuery] DrillBlockDTO drillBlock)
         {
-            bool exists = await _drillBlockRepository.DrillBlockExists(Id);
+            bool exists = await _drillBlockRepository.DrillBlockExists(drillBlock.Id);
             if (!exists)
                 return NotFound();
 
-            var drillBlockForUpdate = await _drillBlockRepository.GetSpecificDrillBlock(Id);
+            var drillBlockForUpdate = await _drillBlockRepository.GetSpecificDrillBlock(drillBlock.Id);
 
             drillBlockForUpdate.Name = drillBlock.Name;
 
-            drillBlockForUpdate.UpdateDate = drillBlock.UpdateDate;
+            drillBlockForUpdate.UpdateDate = DateTime.Now;
 
             bool result = await _drillBlockRepository.UpdateDrillBlock(drillBlockForUpdate);
 
@@ -87,7 +87,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpDelete("/remove-drillBlock")]
         [ProducesResponseType(404)]
         [ProducesResponseType(204)]
-        async public Task<IActionResult> DeleteDrillBlock(int Id)
+        async public Task<IActionResult> DeleteDrillBlock([Required] int Id)
         {
             bool exists = await _drillBlockRepository.DrillBlockExists(Id);
             if (!exists)

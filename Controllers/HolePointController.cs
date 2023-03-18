@@ -30,7 +30,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             return Ok(holePoints);
         }
 
-        [HttpGet("/get-holePoint/{Id}")]
+        [HttpGet("/get-holePoint")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<HolePoint>))]
         async public Task<IActionResult> GetSpecificHolePoint(int Id)
         {
@@ -60,13 +60,13 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpPut("/update-holePoint")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        async public Task<IActionResult> UpdateHolePoint([Required] int Id, [FromQuery] HolePointDTO holePoint)
+        async public Task<IActionResult> UpdateHolePoint([FromQuery] HolePointDTO holePoint)
         {
-            bool exists = await _holePointRepository.HolePointExists(Id);
+            bool exists = await _holePointRepository.HolePointExists(holePoint.Id);
             if (!exists)
                 return NotFound();
 
-            var holePointForUpdate = await _holePointRepository.GetSpecificHolePoint(Id);
+            var holePointForUpdate = await _holePointRepository.GetSpecificHolePoint(holePoint.Id);
 
             holePointForUpdate.HoleId = holePoint.HoleId;
             holePointForUpdate.X = holePoint.X;
@@ -87,7 +87,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpDelete("/remove-holePoint")]
         [ProducesResponseType(404)]
         [ProducesResponseType(204)]
-        async public Task<IActionResult> DeleteHolePoint(int Id)
+        async public Task<IActionResult> DeleteHolePoint([Required] int Id)
         {
             bool exists = await _holePointRepository.HolePointExists(Id);
             if (!exists)

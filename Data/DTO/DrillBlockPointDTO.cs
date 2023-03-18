@@ -5,6 +5,7 @@ namespace TestCase_RIT_CrudAPI.Data.DTO
 {
     public class DrillBlockPointDTO
     {
+        public int Id { get; set; }
         [Required]
         public int DrillBlockId { get; set; }
         [Required]

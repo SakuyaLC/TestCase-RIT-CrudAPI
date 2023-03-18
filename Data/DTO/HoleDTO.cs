@@ -5,6 +5,7 @@ namespace TestCase_RIT_CrudAPI.Data.DTO
 {
     public class HoleDTO
     {
+        public int Id { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]

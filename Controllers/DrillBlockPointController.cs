@@ -30,7 +30,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             return Ok(drillBlockPoints);
         }
 
-        [HttpGet("/get-drillBlockPoint/{Id}")]
+        [HttpGet("/get-drillBlockPoint")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<DrillBlockPoint>))]
         async public Task<IActionResult> GetSpecificDrillBlockPoint(int Id)
         {
@@ -57,16 +57,16 @@ namespace TestCase_RIT_CrudAPI.Controllers
                 return Ok("Drill block point successfully created");
         }
 
-        [HttpPut("/update-drillBlockPoint/{Id}")]
+        [HttpPut("/update-drillBlockPoint")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        async public Task<IActionResult> UpdateDrillBlockPoint([Required] int Id, [FromQuery] DrillBlockPointDTO drillBlockPoint)
+        async public Task<IActionResult> UpdateDrillBlockPoint([FromQuery] DrillBlockPointDTO drillBlockPoint)
         {
-            bool exists = await _drillBlockPointRepository.DrillBlockPointExists(Id);
+            bool exists = await _drillBlockPointRepository.DrillBlockPointExists(drillBlockPoint.Id);
             if (!exists)
                 return NotFound();
 
-            var drillBlockPointForUpdate = await _drillBlockPointRepository.GetSpecificDrillBlockPoint(Id);
+            var drillBlockPointForUpdate = await _drillBlockPointRepository.GetSpecificDrillBlockPoint(drillBlockPoint.Id);
 
             drillBlockPointForUpdate.DrillBlockId = drillBlockPoint.DrillBlockId;
             drillBlockPointForUpdate.Sequence = drillBlockPoint.Sequence;
@@ -88,7 +88,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpDelete("/remove-drillBlockPoint")]
         [ProducesResponseType(404)]
         [ProducesResponseType(204)]
-        async public Task<IActionResult> DeleteDrillBlockPoint(int Id)
+        async public Task<IActionResult> DeleteDrillBlockPoint([Required] int Id)
         {
             bool exists = await _drillBlockPointRepository.DrillBlockPointExists(Id);
             if (!exists)

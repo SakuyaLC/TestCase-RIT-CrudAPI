@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -15,10 +16,10 @@ namespace TestCase_RIT_CrudAPI.Migrations
                 name: "DrillBlocks",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,13 +30,13 @@ namespace TestCase_RIT_CrudAPI.Migrations
                 name: "DrillBlockPoints",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DrillBlockId = table.Column<int>(type: "int", nullable: false),
-                    Sequence = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    X = table.Column<double>(type: "float", nullable: false),
-                    Y = table.Column<double>(type: "float", nullable: false),
-                    Z = table.Column<double>(type: "float", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DrillBlockId = table.Column<int>(type: "integer", nullable: false),
+                    Sequence = table.Column<string>(type: "text", nullable: false),
+                    X = table.Column<double>(type: "double precision", nullable: false),
+                    Y = table.Column<double>(type: "double precision", nullable: false),
+                    Z = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -52,11 +53,11 @@ namespace TestCase_RIT_CrudAPI.Migrations
                 name: "Holes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DrillBlockId = table.Column<int>(type: "int", nullable: false),
-                    Depth = table.Column<double>(type: "float", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    DrillBlockId = table.Column<int>(type: "integer", nullable: false),
+                    Depth = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -73,12 +74,12 @@ namespace TestCase_RIT_CrudAPI.Migrations
                 name: "HolePoints",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    HoleId = table.Column<int>(type: "int", nullable: false),
-                    X = table.Column<double>(type: "float", nullable: false),
-                    Y = table.Column<double>(type: "float", nullable: false),
-                    Z = table.Column<double>(type: "float", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    HoleId = table.Column<int>(type: "integer", nullable: false),
+                    X = table.Column<double>(type: "double precision", nullable: false),
+                    Y = table.Column<double>(type: "double precision", nullable: false),
+                    Z = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {

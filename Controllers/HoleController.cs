@@ -30,7 +30,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
             return Ok(holes);
         }
 
-        [HttpGet("/get-hole/{Id}")]
+        [HttpGet("/get-hole")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Hole>))]
         async public Task<IActionResult> GetSpecificHole(int Id)
         {
@@ -59,13 +59,13 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpPut("/update-hole")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200)]
-        async public Task<IActionResult> UpdateHole([Required] int Id, [FromQuery] HoleDTO hole)
+        async public Task<IActionResult> UpdateHole([FromQuery] HoleDTO hole)
         {
-            bool exists = await _holeRepository.HoleExists(Id);
+            bool exists = await _holeRepository.HoleExists(hole.Id);
             if (!exists)
                 return NotFound();
 
-            var holeForUpdate = await _holeRepository.GetSpecificHole(Id);
+            var holeForUpdate = await _holeRepository.GetSpecificHole(hole.Id);
 
             holeForUpdate.Name = hole.Name;
             holeForUpdate.DrillBlockId = hole.DrillBlockId;
@@ -84,7 +84,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpDelete("/remove-hole")]
         [ProducesResponseType(404)]
         [ProducesResponseType(204)]
-        async public Task<IActionResult> DeleteHole(int Id)
+        async public Task<IActionResult> DeleteHole([Required] int Id)
         {
             bool exists = await _holeRepository.HoleExists(Id);
             if (!exists)
