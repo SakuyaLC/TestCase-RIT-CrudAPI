@@ -34,9 +34,14 @@ namespace TestCase_RIT_CrudAPI.Controllers
         }
 
         [HttpGet("/get-holePoint")]
+        [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(IEnumerable<HolePoint>))]
         async public Task<IActionResult> GetSpecificHolePoint(int Id)
         {
+            bool exists = await _holePointRepository.HolePointExists(Id);
+            if (!exists)
+                return NotFound();
+
             var holePoint = _mapper.Map<HolePointDTO>(await _holePointRepository.GetSpecificHolePoint(Id));
 
             return Ok(holePoint);

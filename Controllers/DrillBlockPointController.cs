@@ -34,9 +34,14 @@ namespace TestCase_RIT_CrudAPI.Controllers
         }
 
         [HttpGet("/get-drillBlockPoint")]
+        [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(IEnumerable<DrillBlockPoint>))]
         async public Task<IActionResult> GetSpecificDrillBlockPoint(int Id)
         {
+            bool exists = await _drillBlockPointRepository.DrillBlockPointExists(Id);
+            if (!exists)
+                return NotFound();
+
             var drillBlockPoint = _mapper.Map<DrillBlockPointDTO>(await _drillBlockPointRepository.GetSpecificDrillBlockPoint(Id));
 
             return Ok(drillBlockPoint);
