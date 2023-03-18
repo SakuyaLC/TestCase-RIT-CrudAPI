@@ -23,7 +23,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
 
         [HttpGet("/get-holePoints")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<HolePoint>))]
-        async public Task<IActionResult> GetDrillBlocks()
+        async public Task<IActionResult> GetHolePoints()
         {
             var holePoints = _mapper.Map<List<HolePointDTO>>(await _holePointRepository.GetHolePoints());
 
@@ -32,9 +32,9 @@ namespace TestCase_RIT_CrudAPI.Controllers
 
         [HttpGet("/get-holePoint/{Id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<HolePoint>))]
-        async public Task<IActionResult> GetSpecifiedHolePoint(int Id)
+        async public Task<IActionResult> GetSpecificHolePoint(int Id)
         {
-            var holePoint = _mapper.Map<HolePoint>(await _holePointRepository.GetSpecificHolePoint(Id));
+            var holePoint = _mapper.Map<HolePointDTO>(await _holePointRepository.GetSpecificHolePoint(Id));
 
             return Ok(holePoint);
         }

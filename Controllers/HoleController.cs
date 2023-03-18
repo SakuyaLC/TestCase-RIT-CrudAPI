@@ -32,9 +32,9 @@ namespace TestCase_RIT_CrudAPI.Controllers
 
         [HttpGet("/get-hole/{Id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Hole>))]
-        async public Task<IActionResult> GetSpecifiedHole(int Id)
+        async public Task<IActionResult> GetSpecificHole(int Id)
         {
-            var hole = _mapper.Map<Hole>(await _holeRepository.GetSpecificHole(Id));
+            var hole = _mapper.Map<HoleDTO>(await _holeRepository.GetSpecificHole(Id));
 
             return Ok(hole);
         }

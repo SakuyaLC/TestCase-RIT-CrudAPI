@@ -31,7 +31,7 @@ namespace TestCase_RIT_CrudAPI.Controllers
 
         [HttpGet("/get-drillBlock/{Id}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<DrillBlock>))]
-        async public Task<IActionResult> GetSpecifiedDrillBlock(int Id)
+        async public Task<IActionResult> GetSpecificDrillBlock(int Id)
         {
             var drillBlock = _mapper.Map<DrillBlockDTO>(await _drillBlockRepository.GetSpecificDrillBlock(Id));
 
