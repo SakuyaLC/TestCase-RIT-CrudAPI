@@ -15,9 +15,12 @@ namespace TestCase_RIT_CrudAPI.Controllers
         private readonly IDrillBlockPointRepository _drillBlockPointRepository;
         private readonly IMapper _mapper;
 
-        public DrillBlockPointController(IDrillBlockPointRepository drillBlockPointRepository, IMapper mapper)
+        private readonly IDrillBlockRepository _drillBlockRepository;
+
+        public DrillBlockPointController(IDrillBlockPointRepository drillBlockPointRepository, IDrillBlockRepository drillBlockRepository, IMapper mapper)
         {
             _drillBlockPointRepository = drillBlockPointRepository;
+            _drillBlockRepository = drillBlockRepository;
             _mapper = mapper;
         }
 
@@ -46,6 +49,10 @@ namespace TestCase_RIT_CrudAPI.Controllers
         {
             if (drillBlockPoint == null) return BadRequest(ModelState);
 
+            bool exists = await _drillBlockRepository.DrillBlockExists(drillBlockPoint.DrillBlockId);
+            if (!exists)
+                return NotFound();
+
             var drillBlockPointMap = _mapper.Map<DrillBlockPoint>(drillBlockPoint);
             if (drillBlockPointMap == null) return BadRequest(ModelState);
 
@@ -62,8 +69,12 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [ProducesResponseType(200)]
         async public Task<IActionResult> UpdateDrillBlockPoint([FromQuery] DrillBlockPointDTO drillBlockPoint)
         {
-            bool exists = await _drillBlockPointRepository.DrillBlockPointExists(drillBlockPoint.Id);
-            if (!exists)
+            bool drillBlockPointExists = await _drillBlockPointRepository.DrillBlockPointExists(drillBlockPoint.Id);
+            if (!drillBlockPointExists)
+                return NotFound();
+
+            bool drillBlockExists = await _drillBlockRepository.DrillBlockExists(drillBlockPoint.DrillBlockId);
+            if (!drillBlockExists)
                 return NotFound();
 
             var drillBlockPointForUpdate = await _drillBlockPointRepository.GetSpecificDrillBlockPoint(drillBlockPoint.Id);

@@ -15,9 +15,12 @@ namespace TestCase_RIT_CrudAPI.Controllers
         private readonly IHolePointRepository _holePointRepository;
         private readonly IMapper _mapper;
 
-        public HolePointController(IHolePointRepository holePointRepository, IMapper mapper)
+        private readonly IHoleRepository _holeRepository;
+
+        public HolePointController(IHolePointRepository holePointRepository, IHoleRepository holeRepository, IMapper mapper)
         {
             _holePointRepository = holePointRepository;
+            _holeRepository = holeRepository;
             _mapper = mapper;
         }
 
@@ -42,8 +45,12 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [HttpPost("/create-holePoint")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        async public Task<IActionResult> CreateHole([FromQuery] HolePointDTO holePoint)
+        async public Task<IActionResult> CreateHolePoint([FromQuery] HolePointDTO holePoint)
         {
+            bool holeExists = await _holeRepository.HoleExists(holePoint.HoleId);
+            if (!holeExists)
+                return NotFound();
+
             if (holePoint == null) return BadRequest(ModelState);
 
             var holePointMap = _mapper.Map<HolePoint>(holePoint);
@@ -62,8 +69,12 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [ProducesResponseType(200)]
         async public Task<IActionResult> UpdateHolePoint([FromQuery] HolePointDTO holePoint)
         {
-            bool exists = await _holePointRepository.HolePointExists(holePoint.Id);
-            if (!exists)
+            bool holePointExists = await _holePointRepository.HolePointExists(holePoint.Id);
+            if (!holePointExists)
+                return NotFound();
+
+            bool holeExists = await _holeRepository.HoleExists(holePoint.HoleId);
+            if (!holeExists)
                 return NotFound();
 
             var holePointForUpdate = await _holePointRepository.GetSpecificHolePoint(holePoint.Id);

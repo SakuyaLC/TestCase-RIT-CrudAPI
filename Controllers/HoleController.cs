@@ -15,9 +15,12 @@ namespace TestCase_RIT_CrudAPI.Controllers
         private readonly IHoleRepository _holeRepository;
         private readonly IMapper _mapper;
 
-        public HoleController(IHoleRepository holeRepository, IMapper mapper)
+        private readonly IDrillBlockRepository _drillBlockRepository;
+
+        public HoleController(IHoleRepository holeRepository, IDrillBlockRepository drillBlockRepository, IMapper mapper)
         {
             _holeRepository = holeRepository;
+            _drillBlockRepository = drillBlockRepository;
             _mapper = mapper;
         }
 
@@ -46,6 +49,10 @@ namespace TestCase_RIT_CrudAPI.Controllers
         {
             if (hole == null) return BadRequest(ModelState);
 
+            bool exists = await _drillBlockRepository.DrillBlockExists(hole.DrillBlockId);
+            if (!exists)
+                return NotFound();
+
             var holeMap = _mapper.Map<Hole>(hole);
             if (holeMap == null) return BadRequest(ModelState);
 
@@ -61,8 +68,12 @@ namespace TestCase_RIT_CrudAPI.Controllers
         [ProducesResponseType(200)]
         async public Task<IActionResult> UpdateHole([FromQuery] HoleDTO hole)
         {
-            bool exists = await _holeRepository.HoleExists(hole.Id);
-            if (!exists)
+            bool holeExists = await _holeRepository.HoleExists(hole.Id);
+            if (!holeExists)
+                return NotFound();
+
+            bool drillBlockExists = await _drillBlockRepository.DrillBlockExists(hole.DrillBlockId);
+            if (!drillBlockExists)
                 return NotFound();
 
             var holeForUpdate = await _holeRepository.GetSpecificHole(hole.Id);
